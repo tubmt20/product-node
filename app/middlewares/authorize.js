@@ -17,7 +17,6 @@ function authorize(roles = []) {
             const bearer = bearerHeader.split(' ');
             const bearerToken = bearer[1];
             const verify = jwt.verify(bearerToken, process.env.SECRET_KEY);
-            console.log(verify);
             User.findByPk(verify.id)
                 .then(user => {
                     if (!user) {

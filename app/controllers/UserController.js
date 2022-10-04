@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
         if (!email || !password) {
             return res.json({ message: 'Please enter all the details' })
         }
-        const userExist = await db.users.findOne({ email: email });
+        const userExist = await db.users.findOne({ where: { email: email } });
         if (!userExist) {
             return res.json({ message: 'Wrong credentials' })
         }
@@ -122,7 +122,6 @@ exports.delete = (req, res) => {
         where: { id: id }
     })
         .then(num => {
-            console.log(num);
             if (num == 1) {
                 res.send({
                     message: "User was deleted successfully!"
