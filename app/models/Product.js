@@ -59,6 +59,10 @@ module.exports = (sequelize, Sequelize) => {
             required: true,
             allowNull: false
         },
+        price: {
+            type: Sequelize.DOUBLE,
+            defaultValue: 0
+        },
         code: {
             type: Sequelize.STRING,
             required: true,
@@ -66,14 +70,25 @@ module.exports = (sequelize, Sequelize) => {
         }
     });
 
-    Product.hasMany(ProductAttribute, {
-        through: ProductAttributesValue
+    Product.belongsToMany(ProductAttribute, {
+        through: ProductAttributesValue,
+        unique: false
     });
-    ProductAttribute.hasMany(ProductAttributesValue,
+    ProductAttribute.belongsToMany(Product, {
+        through: ProductAttributesValue,
+        unique: false
+    });
+    Product.hasMany(ProductAttributesValue,
+        {
+            foreignKey: 'productId',
+            as: 'attributes'
+        });
+    ProductAttributesValue.belongsTo(ProductAttribute,
         {
             foreignKey: 'productattributeId',
-            as: 'values'
+            as: 'attribute_name'
         });
+
 
     return { Product, ProductAttribute, ProductAttributesValue };
 };
