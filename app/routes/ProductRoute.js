@@ -11,6 +11,7 @@ module.exports = app => {
     router.post("/createProductAttribute", authorize(['Admin']), products.createProductAttribute);
     router.post("/createProductAttributeValue", authorize(['Admin']), products.createProductAttributeValue);
     router.get("/showListProduct", products.showListProduct);
+    router.get("/searchProduct", products.searchProducts);
 
     app.use('/api/product', router);
 }
