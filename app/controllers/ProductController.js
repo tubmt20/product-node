@@ -1,7 +1,7 @@
 const db = require("../models");
 const Product = db.products;
 const Op = db.Sequelize.Op;
-const ulities = require('../Ulities');
+const utils = require('../utils');
 
 exports.createProduct = async (req, res, next) => {
     data = req.body;
@@ -9,7 +9,7 @@ exports.createProduct = async (req, res, next) => {
     if (!code || !name || !description || !price || !quantity || !category) {
         return res.json({ message: 'Please enter all the details' })
     }
-    var datum = await db.users.findByPk(ulities.userID(req.headers.authorization))
+    var datum = await db.users.findByPk(utils.userID(req.headers.authorization))
         .then(data => {
             return data;
         });
@@ -61,7 +61,8 @@ exports.createProductAttributeValue = (req, res, next) => {
 }
 
 exports.showListProduct = async (req, res, next) => {
-    Product.Product.findAll({
+    const { limit, page } = req.query;
+    Product.Product.findAndCountAll({
         include: [
             {
                 model: Product.ProductAttributesValue,
@@ -76,14 +77,20 @@ exports.showListProduct = async (req, res, next) => {
                 attributes: ['id', 'value', 'price'],
             }
         ],
+        limit: limit,
+        offset: (page - 1) * limit,
+        order: [['createdAt', 'ASC']],
     })
         .then(data => {
-            data.map((data) => {
+            data.rows.map((data) => {
                 data.dataValues.attributes.map((value) => {
                     value.dataValues.attribute_name = value.dataValues.attribute_name.name;
                 })
             })
-            res.send(data);
+            const dt = data.rows;
+            const total = data.count;
+            const response = utils.pagination({ dt, total, limit, page });
+            res.send(response);
         })
         .catch(err => {
             res.status(500).send({
@@ -116,7 +123,11 @@ exports.searchProducts = async (req, res) => {
         ],
     })
         .then(data => {
-
+            data.map((data) => {
+                data.dataValues.attributes.map((value) => {
+                    value.dataValues.attribute_name = value.dataValues.attribute_name.name;
+                })
+            })
             res.send(data);
         })
         .catch(err => {

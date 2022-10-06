@@ -11,7 +11,7 @@ exports.create = async (req, res) => {
         if (!name || !email || !password) {
             return res.json({ message: 'Please enter all the details' })
         }
-        const userExist = await db.users.findOne({
+        const userExist = await User.findOne({
             where: { email: email },
         });
         if (userExist) {
