@@ -22,4 +22,12 @@ db.sequelize = sequelize;
 db.users = require("./User.js")(sequelize, Sequelize);
 db.products = require("./Product.js")(sequelize, Sequelize);
 
+db.categories = require("./Category.js")(sequelize, Sequelize);
+db.products.Product.hasOne(db.categories,
+    {
+        sourceKey: 'category_id',
+        foreignKey: 'id',
+    });
+
+
 module.exports = db;

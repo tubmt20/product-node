@@ -4,7 +4,6 @@ const Op = db.Sequelize.Op;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Create and Save a new User
 exports.create = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -41,8 +40,7 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving Users."
+                message: err.message || "Some error occurred while retrieving Users."
             });
         });
 };

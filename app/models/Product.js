@@ -1,3 +1,4 @@
+const moment = require('moment');
 module.exports = (sequelize, Sequelize) => {
     const Product = sequelize.define("product", {
         name: {
@@ -10,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
             required: true,
             allowNull: false
         },
-        category: {
-            type: Sequelize.STRING,
+        category_id: {
+            type: Sequelize.INTEGER,
             required: true,
         },
         thumbnail: {
@@ -29,7 +30,31 @@ module.exports = (sequelize, Sequelize) => {
         },
         user_name: {
             type: Sequelize.STRING,
-        }
+        },
+        created_at: {
+            type: Sequelize.DATE,
+            required: true,
+            allowNull: true,
+            set() {
+                this.setDataValue('created_at', new Date());
+            },
+            get() {
+                return moment(this.getDataValue('created_at')).format('DD-MM-YYYY HH:mm:ss');
+            }
+        },
+        updated_at: {
+            type: Sequelize.DATE,
+            required: true,
+            allowNull: true,
+            set() {
+                this.setDataValue('updated_at', new Date());
+            },
+            get() {
+                return moment(this.getDataValue('updated_at')).format('DD-MM-YYYY HH:mm:ss');
+            }
+        },
+    }, {
+        timestamps: false,
     });
     const ProductAttribute = sequelize.define("productattribute", {
         name: {
@@ -88,7 +113,8 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: 'productattributeId',
             as: 'attribute_name'
         });
-
-
+    // Product.associate = models => {
+    //     Product.hasOne(models.categories);
+    // }
     return { Product, ProductAttribute, ProductAttributesValue };
 };

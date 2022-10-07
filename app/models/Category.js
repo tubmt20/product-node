@@ -1,17 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
-    const ProductAttributesValue = sequelize.define("productattribute", {
+    const Category = sequelize.define("category", {
         name: {
             type: Sequelize.STRING,
-            required: true,
-            allowNull: false
-        },
-        product_id: {
-            type: Sequelize.INTEGER,
-            required: true,
-            allowNull: false
-        },
-        attribute_id: {
-            type: Sequelize.INTEGER,
             required: true,
             allowNull: false
         },
@@ -19,9 +9,19 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             required: true,
             allowNull: false
+        },
+        description: {
+            type: Sequelize.STRING,
+            required: true,
+            allowNull: false
+        },
+        parent: {
+            type: Sequelize.STRING,
+            required: false,
+            allowNull: true
         }
     }, {
-
+        timestamps: false,
     });
-    return ProductAttributesValue;
-};
+    return Category;
+}

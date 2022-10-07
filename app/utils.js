@@ -11,9 +11,9 @@ exports.userID = (token) => {
 
 exports.pagination = data => {
     const total_page = Math.ceil(data.total / data.limit);
-    const limit = data.limit;
+    const limit = parseInt(data.limit);
     const current_page = parseInt(data.page);
-    const previous_page = current_page == 1 ? 0 : parseInt(current_page) - 1;
+    const previous_page = current_page == 1 ? null : parseInt(current_page) - 1;
     const next_page = current_page == total_page ? null : parseInt(current_page) + 1;
     const result = {
         data: data.dt,

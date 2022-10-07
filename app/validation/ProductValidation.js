@@ -11,4 +11,15 @@ const productSchema = yup.object({
     })
 });
 
-module.exports = { productSchema };
+const productUpdateSchema = yup.object({
+    body: yup.object({
+        name: yup.string(),
+        code: yup.string(),
+        category_id: yup.number(),
+        thumbnail: yup.string(),
+        description: yup.string(),
+        quantity: yup.number(),
+    })
+});
+
+module.exports = { productSchema, productUpdateSchema };
