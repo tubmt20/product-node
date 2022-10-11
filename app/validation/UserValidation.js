@@ -6,7 +6,7 @@ const userSchema = yup.object({
     name: yup.string().required(),
     email: yup.string().email().required(),
     password: yup.string().required(),
-    role: yup.string().required("Role is required")
+    role_id: yup.number().required(),
   })
 });
 

@@ -19,7 +19,20 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.users = require("./User.js")(sequelize, Sequelize);
-db.products = require("./Product.js")(sequelize, Sequelize);
+db.User = require("./User.js")(sequelize, Sequelize);
+db.Product = require("./Product.js")(sequelize, Sequelize);
+
+db.Category = require("./Category.js")(sequelize, Sequelize);
+db.Role = require("./Role.js")(sequelize, Sequelize);
+db.Attribute = require("./Attribute.js")(sequelize, Sequelize);
+db.AttributeValue = require("./AttributeValue.js")(sequelize, Sequelize);
+
+
+
+Object.keys(db).forEach(function (modelName) {
+    if ('associate' in db[modelName]) {
+        db[modelName].associate(db);
+    }
+});
 
 module.exports = db;

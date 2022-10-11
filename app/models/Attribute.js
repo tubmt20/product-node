@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const ProductAttribute = sequelize.define("productattribute", {
+    const Attribute = sequelize.define("Attribute", {
         name: {
             type: Sequelize.STRING,
             required: true,
@@ -14,5 +14,11 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false,
         createdAt: false
     });
-    return ProductAttribute;
-};
+    Attribute.associate = (models) => {
+        Attribute.belongsToMany(models.Product, {
+            through: models.AttributeValue,
+            unique: false
+        });
+    }
+    return Attribute;
+}

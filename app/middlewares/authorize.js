@@ -1,5 +1,6 @@
 const db = require("../models");
-const User = db.users;
+const User = db.User;
+const Role = db.Role;
 const jwt = require('jsonwebtoken');
 
 module.exports = authorize;
@@ -22,9 +23,15 @@ function authorize(roles = []) {
                     if (!user) {
                         return next('User not found');
                     }
-                    if (roles.length && !roles.includes(user.role)) {
-                        return next('Unauthorized');
-                    }
+                    Role.findByPk(user.dataValues.role_id)
+                        .then(role => {
+                            if (!role) {
+                                return next('Role not found');
+                            }
+                            if (roles.length && !roles.includes(role.dataValues.name)) {
+                                return next(`Unauthorized`);
+                            }
+                        })
                 });
             next();
         }

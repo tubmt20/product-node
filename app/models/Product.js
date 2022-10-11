@@ -1,5 +1,6 @@
+const moment = require('moment');
 module.exports = (sequelize, Sequelize) => {
-    const Product = sequelize.define("product", {
+    const Product = sequelize.define("Product", {
         name: {
             type: Sequelize.STRING,
             required: true,
@@ -10,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
             required: true,
             allowNull: false
         },
-        category: {
-            type: Sequelize.STRING,
+        category_id: {
+            type: Sequelize.INTEGER,
             required: true,
         },
         thumbnail: {
@@ -29,66 +30,46 @@ module.exports = (sequelize, Sequelize) => {
         },
         user_name: {
             type: Sequelize.STRING,
-        }
-    });
-    const ProductAttribute = sequelize.define("productattribute", {
-        name: {
-            type: Sequelize.STRING,
-            required: true,
-            allowNull: false
         },
-        code: {
-            type: Sequelize.STRING(20),
+        created_at: {
+            type: Sequelize.DATE,
             required: true,
-            allowNull: false
-        }
+            allowNull: true,
+            defaultValue: Sequelize.NOW,
+            get() {
+                return moment(this.getDataValue('created_at')).format('DD-MM-YYYY HH:mm:ss');
+            }
+        },
+        updated_at: {
+            type: Sequelize.DATE,
+            required: true,
+            allowNull: true,
+            defaultValue: Sequelize.NOW,
+            get() {
+                return moment(this.getDataValue('updated_at')).format('DD-MM-YYYY HH:mm:ss');
+            }
+        },
     }, {
         timestamps: false,
-        createdAt: false
-    });
-    const ProductAttributesValue = sequelize.define("productattributevalue", {
-        id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            required: true,
-            allowNull: false
-        },
-        value: {
-            type: Sequelize.STRING,
-            required: true,
-            allowNull: false
-        },
-        price: {
-            type: Sequelize.DOUBLE,
-            defaultValue: 0
-        },
-        code: {
-            type: Sequelize.STRING,
-            required: true,
-            allowNull: false
-        }
+        indexes: [
+            { fields: ['code'], name: 'code_unique', unique: true }
+        ]
     });
 
-    Product.belongsToMany(ProductAttribute, {
-        through: ProductAttributesValue,
-        unique: false
-    });
-    ProductAttribute.belongsToMany(Product, {
-        through: ProductAttributesValue,
-        unique: false
-    });
-    Product.hasMany(ProductAttributesValue,
-        {
-            foreignKey: 'productId',
-            as: 'attributes'
+    Product.associate = models => {
+        Product.belongsToMany(models.Attribute, {
+            through: models.AttributeValue,
+            unique: false
         });
-    ProductAttributesValue.belongsTo(ProductAttribute,
-        {
-            foreignKey: 'productattributeId',
-            as: 'attribute_name'
+        Product.hasMany(models.AttributeValue,
+            {
+                foreignKey: 'ProductId',
+                as: 'attributes'
+            });
+
+        Product.belongsTo(models.Category, {
+            foreignKey: 'category_id',
         });
-
-
-    return { Product, ProductAttribute, ProductAttributesValue };
+    }
+    return Product;
 };
