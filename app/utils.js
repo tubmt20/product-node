@@ -28,3 +28,16 @@ exports.pagination = data => {
     };
     return result;
 }
+
+exports.loadData = (element, define, arr, fileHeader) => {
+    try {
+        let json = {};
+        arr.map(text => json[define[fileHeader[text].v]] =
+            element[fileHeader[text].v]
+        );
+        return json;
+    } catch (err) {
+        console.log(err);
+        return "File template invalid!!!";
+    }
+}

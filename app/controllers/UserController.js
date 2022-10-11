@@ -1,8 +1,9 @@
 const db = require("../models");
-const User = db.users;
+const User = db.User;
 const Op = db.Sequelize.Op;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const utils = require('../utils');
 
 exports.create = async (req, res) => {
     try {
@@ -31,10 +32,14 @@ exports.create = async (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    const role = req.query.role;
-    var condition = role ? { role: { [Op.iLike]: `%${role}%` } } : null;
-
-    User.findAll({ where: condition })
+    User.findAll({
+        include: {
+            model: db.roles,
+        },
+        attributes: {
+            exclude: ['password', 'token', 'role_id']
+        }
+    })
         .then(data => {
             res.send(data);
         })
@@ -46,8 +51,10 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    const id = req.params.id;
-
+    const id = parseInt(req.params.id);
+    if (!req.headers.authorization) res.send(403);
+    const check = utils.userID(req.headers.authorization);
+    if (id !== check) res.status(403).send("ID user not valid!!!");
     User.findByPk(id)
         .then(data => {
             if (data) {

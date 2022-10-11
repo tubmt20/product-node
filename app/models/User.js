@@ -30,15 +30,21 @@ module.exports = (sequelize, Sequelize) => {
             required: true,
             allowNull: false
         },
-        role: {
-            type: Sequelize.STRING,
-            required: true,
-            allowNull: false,
-        },
+        // role: {
+        //     type: Sequelize.STRING,
+        //     required: true,
+        //     allowNull: false,
+        // },
         token: {
             type: Sequelize.TEXT,
             required: false
         }
     });
+
+    User.associate = (models) => {
+        User.belongsTo(models.Role, {
+            foreignKey: 'role_id',
+        });
+    };
     return User;
 };

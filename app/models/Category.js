@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const Category = sequelize.define("category", {
+    const Category = sequelize.define("Category", {
         name: {
             type: Sequelize.STRING,
             required: true,
@@ -21,7 +21,19 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true
         }
     }, {
-        timestamps: false,
+        timestamps: false
     });
+
+    // Category.associate = models => {
+    //     Category.hasMany(models.product, {
+    //         foreignKey: 'category_id',
+    //     });
+    // }
+
+    Category.associate = (models) => {
+        Category.hasMany(models.Product, {
+            foreignKey: 'category_id',
+        });
+    };
     return Category;
 }
