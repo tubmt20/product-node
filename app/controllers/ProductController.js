@@ -47,7 +47,9 @@ exports.importAttributeValue = async (req, res, next) => {
 
         xlData.forEach(element => {
             const test = utils.loadData(element, define_header, arr, reqHeaders);
-            arr_data.push(test);
+            if (test) {
+                arr_data.push(test);
+            }
         });
         if (typeof arr_data[0] === 'string') next(arr_data[0]);
         arr_data.forEach(async element => {
