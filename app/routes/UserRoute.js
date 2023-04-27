@@ -13,7 +13,7 @@ module.exports = app => {
 
     router.get("/show", authorize(['Admin']), users.findAll);
 
-    router.get("/profile/:id", users.findOne);
+    router.get("/profile", users.findOne);
 
     router.put("/:id", users.update);
 

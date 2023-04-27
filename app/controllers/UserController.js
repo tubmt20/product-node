@@ -34,7 +34,7 @@ exports.create = async (req, res) => {
 exports.findAll = (req, res) => {
     User.findAll({
         include: {
-            model: db.roles,
+            model: db.Role,
         },
         attributes: {
             exclude: ['password', 'token', 'role_id']
@@ -54,11 +54,18 @@ exports.findOne = (req, res) => {
     const id = parseInt(req.params.id);
     if (!req.headers.authorization) res.send(403);
     const check = utils.userID(req.headers.authorization);
-    if (id !== check) res.status(403).send("ID user not valid!!!");
-    User.findByPk(id)
+    // if (id !== check) res.status(403).send("ID user not valid!!!");
+    User.findByPk(check, {
+        include: {
+            model: db.Role,
+        },
+        attributes: {
+            exclude: ['password', 'token', 'role_id']
+        }
+    })
         .then(data => {
             if (data) {
-                res.send(data);
+                res.send({ user: data });
             } else {
                 res.status(404).send({
                     message: `Cannot find User with id=${id}.`
@@ -79,7 +86,7 @@ exports.login = async (req, res) => {
         if (!email || !password) {
             return res.json({ message: 'Please enter all the details' })
         }
-        const userExist = await db.users.findOne({ where: { email: email } });
+        const userExist = await db.User.findOne({ where: { email: email }, attributes: ['id', 'name', 'email', 'password', 'role_id'] });
         if (!userExist) {
             return res.json({ message: 'Wrong credentials' })
         }
@@ -90,10 +97,15 @@ exports.login = async (req, res) => {
         const token = jwt.sign({ id: userExist.id }, process.env.SECRET_KEY, {
             expiresIn: process.env.JWT_EXPIRE,
         });
-        return res.json({ success: true, message: 'LoggedIn Successfully', token: token })
+        return res.json({ success: true, message: 'LoggedIn Successfully', token: token });
     } catch (error) {
-        return res.json({ error: error });
+        console.log(error);
+        res.status(400).json({ error: error });
     }
+}
+
+exports.logout = (req, res) => {
+    
 }
 
 exports.update = (req, res) => {

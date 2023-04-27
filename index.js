@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/UserRoute")(app);
 require("./app/routes/ProductRoute")(app);
+require("./app/routes/NotificationRoute")(app);
 
 
 // set port, listen for requests
